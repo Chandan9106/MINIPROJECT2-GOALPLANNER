@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Planner Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            background: #e3f2fd;
+        }
+        .sidebar {
+            width: 250px;
+            background: #1e88e5;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar ul li {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            width: 100%;
+        }
+        .header {
+            background: #42a5f5;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .dashboard-content {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: calc(33.333% - 20px);
+            text-align: center;
+        }
+        .goal-list {
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .goal-list h3 {
+            margin-bottom: 10px;
+        }
+        .goal-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .goal-list ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .goal-list ul li:last-child {
+            border-bottom: none;
+        }
+        .goal-actions {
+            margin-top: 20px;
+        }
+        .goal-actions input, .goal-actions button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .goal-actions input {
+            width: 70%;
+            border: 1px solid #ccc;
+        }
+        .goal-actions button {
+            background: #1e88e5;
+            color: white;
+            cursor: pointer;
+        }
+        .goal-actions button:hover {
+            background: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Goal Planner</h2>
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">My Goals</a></li>
+            <li><a href="#">Progress</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <div class="header">Welcome to Your Goal Planner</div>
+        <div class="dashboard-content">
+            <div class="card">
+                <h3>Goals Completed</h3>
+                <p>{{ completed_goals }} out of {{ total_goals }}</p>
+            </div>
+            <div class="card">
+                <h3>Current Goal</h3>
+                <p>{{ current_goal }}
+                    <div class="card">
+                        <h3>Current Goal</h3>
+                        <p>{% if current_goal %}{{ current_goal }}{% else %}No active goal{% endif %}</p>
+                    </div>
+                    
+                </p>
+            </div>
+            <div class="card">
+                <h3>Progress</h3>
+                <p>{{ progress_percentage }}% Completed
+                    <div class="card">
+                        <h3>Progress</h3>
+                        <p>{{ progress_percentage }}% Completed</p>
+                    </div>
+                    
+                </p>
+            </div>
+        </div>
+
+        <div class="goal-list">
+            <h3>Upcoming Goals</h3>
+            <ul>
+                {% for goal in goals %}
+                <li>
+                    {{ goal.title }}
+                    <div>
+                        <form action="{{ url_for('update_goal') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="goal_id" value="{{ goal.id }}">
+                            <input type="text" name="new_name" placeholder="Update goal">
+                            <button type="submit">✏️ Update</button>
+                        </form>
+                        <form action="{{ url_for('delete_goal') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="goal_id" value="{{ goal.id }}">
+                            <button type="submit">❌ Delete</button>
+                        </form>
+                        
+                    </div>
+                    <form action="{{ url_for('complete_goal') }}" method="post" style="display:inline;">
+                        <input type="hidden" name="goal_id" value="{{ goal.id }}">
+                        <button type="submit">✅ Complete</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="goal-actions">
+            <h3>Add New Goal</h3>
+            <form action="{{ url_for('add_goal') }}" method="post">
+                <input type="text" name="goal_title" placeholder="Enter new goal" required>
+                <button type="submit">Add Goal</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
