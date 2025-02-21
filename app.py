@@ -6,8 +6,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 hashed_password = generate_password_hash("yourpassword")
 print(hashed_password)  
 
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Chandu9106@localhost/goalplanner' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost/goalplanner' 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'
 
